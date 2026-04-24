@@ -1,0 +1,205 @@
+version: '3.9'
+
+services:
+
+  eureka:
+    build: ../cd_eureka
+    ports:
+      - "9009:9009"
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9009/actuator/health"]
+      interval: 5s
+      retries: 10
+
+  db-auth:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cd_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+
+  auth-service:
+    build: ../cd_auth
+    ports:
+      - "9900:9900"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-auth:5432/cd_auth
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      eureka:
+        condition: service_healthy
+      db-auth:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  db-generator:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cd_generator
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_generator:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+
+  generator-service:
+    build: ../cd_generator
+    ports:
+      - "9903:9903"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-generator:5432/cd_generator
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      auth-service:
+        condition: service_started
+      db-generator:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  db-mock:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cd_mock
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data_mock:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+
+  mock-service:
+    build: ../cd_mock
+    ports:
+      - "9912:9912"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-mock:5432/cd_mock
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      auth-service:
+        condition: service_started
+      db-mock:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  db-desc:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cd_desc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_data_desc:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+
+  desc-service:
+    build: ../cd_desc
+    ports:
+      - "9902:9902"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-desc:5432/cd_desc
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      auth-service:
+        condition: service_started
+      db-desc:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  site-service:
+    build: ../cd_site
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      auth-service:
+        condition: service_started
+    networks:
+      - microservices-net
+      
+  db-notification:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: cd_notification
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_data_notification:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+
+  notification-service:
+    build: ../cd_notification
+    ports:
+      - "9920:9920"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-notification:5432/cd_notification
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
+      - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
+      - EUREKA_INSTANCE_HOSTNAME=host.docker.internal
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+    depends_on:
+      auth-service:
+        condition: service_started
+      db-notification:
+        condition: service_started
+    networks:
+      - microservices-net    
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  postgres_data_auth:
+  postgres_data_generator:
+  postgres_data_mock:
+  postgres_data_desc:
+  postgres_data_notification:
