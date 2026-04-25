@@ -157,19 +157,7 @@ services:
     ports:
       - "8080:8080"
     entrypoint: >
-      sh -c "
-      echo 'Waiting for DESC-SERVICE in Eureka...';
-      for i in {1..30}; do
-        if wget -qO- http://eureka:9009/eureka/apps/DESC-SERVICE | grep -q instance; then
-          echo 'DESC-SERVICE is registered!';
-          break;
-        fi;
-        echo 'Still waiting...';
-        sleep 2;
-      done;
-
-      java -jar app.jar
-      "
+      sh -c "sleep 30 && java -jar app.jar"
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
       - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
