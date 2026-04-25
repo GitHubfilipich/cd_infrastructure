@@ -156,8 +156,6 @@ services:
     build: ../cd_site
     ports:
       - "8080:8080"
-    entrypoint: >
-      sh -c "sleep 30 && java -jar app.jar"
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:9009/eureka
       - SECURITY_OAUTH2_RESOURCE_USERINFOURI=http://auth-service:9900/user
