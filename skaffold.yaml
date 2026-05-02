@@ -4,19 +4,19 @@ kind: Config
 build:
   artifacts:
     - image: eureka
-      context: cd_eureka
+      context: ../cd_eureka
     - image: auth-service
-      context: cd_auth
+      context: ../cd_auth
     - image: generator-service
-      context: cd_generator
+      context: ../cd_generator
     - image: mock-service
-      context: cd_mock
+      context: ../cd_mock
     - image: desc-service
-      context: cd_desc
+      context: ../cd_desc
     - image: site-service
-      context: cd_site
+      context: ../cd_site
     - image: notification-service
-      context: cd_notification
+      context: ../cd_notification
 
 deploy:
   helm:
