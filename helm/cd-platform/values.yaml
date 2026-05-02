@@ -1,0 +1,40 @@
+services:
+  eureka:
+    image: eureka
+    port: 9009
+
+  auth:
+    image: auth-service
+    port: 9900
+
+  generator:
+    image: generator-service
+    port: 9903
+
+  mock:
+    image: mock-service
+    port: 9912
+
+  desc:
+    image: desc-service
+    port: 9902
+
+  site:
+    image: site-service
+    port: 8080
+
+  notification:
+    image: notification-service
+    port: 9920
+
+databases:
+  - name: auth
+    db: cd_auth
+  - name: generator
+    db: cd_generator
+  - name: mock
+    db: cd_mock
+  - name: desc
+    db: cd_desc
+  - name: notification
+    db: cd_notification

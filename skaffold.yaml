@@ -1,0 +1,27 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+
+build:
+  artifacts:
+    - image: eureka
+      context: cd_eureka
+    - image: auth-service
+      context: cd_auth
+    - image: generator-service
+      context: cd_generator
+    - image: mock-service
+      context: cd_mock
+    - image: desc-service
+      context: cd_desc
+    - image: site-service
+      context: cd_site
+    - image: notification-service
+      context: cd_notification
+
+deploy:
+  helm:
+    releases:
+      - name: cd-platform
+        chartPath: helm/cd-platform
+        valuesFiles:
+          - helm/cd-platform/values.yaml
