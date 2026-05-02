@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: site-service
+  template:
+    metadata:
+      labels:
+        app: site-service
+    spec:
+      containers:
+        - name: site-service
+          image: site-service
+          ports:
+            - containerPort: 8080
+          env:
+            # Eureka
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: http://eureka:9009/eureka
+
+            # Auth
+            - name: SECURITY_OAUTH2_RESOURCE_USERINFOURI
+              value: http://auth-service:9900/user
+
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "false"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: site-service
+spec:
+  selector:
+    app: site-service
+  ports:
+    - port: 8080
+      targetPort: 8080

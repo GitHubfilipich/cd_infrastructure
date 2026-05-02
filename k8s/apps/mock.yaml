@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mock-service
+  template:
+    metadata:
+      labels:
+        app: mock-service
+    spec:
+      containers:
+        - name: mock-service
+          image: mock-service
+          ports:
+            - containerPort: 9912
+          env:
+            # DB
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://db-mock:5432/cd_mock
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+
+            # Eureka
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: http://eureka:9009/eureka
+
+            # Auth
+            - name: SECURITY_OAUTH2_RESOURCE_USERINFOURI
+              value: http://auth-service:9900/user
+
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "false"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mock-service
+spec:
+  selector:
+    app: mock-service
+  ports:
+    - port: 9912
+      targetPort: 9912

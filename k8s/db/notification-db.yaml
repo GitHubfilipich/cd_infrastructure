@@ -1,24 +1,23 @@
-{{- range .Values.databases }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-{{ .name }}
+  name: db-notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db-{{ .name }}
+      app: db-notification
   template:
     metadata:
       labels:
-        app: db-{{ .name }}
+        app: db-notification
     spec:
       containers:
         - name: postgres
           image: postgres:15-alpine
           env:
             - name: POSTGRES_DB
-              value: {{ .db }}
+              value: cd_notification
             - name: POSTGRES_USER
               value: postgres
             - name: POSTGRES_PASSWORD
@@ -29,12 +28,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-{{ .name }}
+  name: db-notification
 spec:
+  type: NodePort
   selector:
-    app: db-{{ .name }}
+    app: db-notification
   ports:
     - port: 5432
       targetPort: 5432
----
-{{- end }}
+      nodePort: 30037

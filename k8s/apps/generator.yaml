@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generator-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: generator-service
+  template:
+    metadata:
+      labels:
+        app: generator-service
+    spec:
+      containers:
+        - name: generator-service
+          image: generator-service
+          ports:
+            - containerPort: 9903
+          env:
+            # DB
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://db-generator:5432/cd_generator
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+
+            # Eureka
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: http://eureka:9009/eureka
+
+            # Auth service dependency (как в docker-compose)
+            - name: SECURITY_OAUTH2_RESOURCE_USERINFOURI
+              value: http://auth-service:9900/user
+
+            # Network stability (как у тебя было)
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: generator-service
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "false"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: generator-service
+spec:
+  selector:
+    app: generator-service
+  ports:
+    - port: 9903
+      targetPort: 9903

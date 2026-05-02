@@ -1,28 +1,35 @@
-{{- range $name, $svc := .Values.services }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $name }}
+  name: eureka
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ $name }}
+      app: eureka
   template:
     metadata:
       labels:
-        app: {{ $name }}
+        app: eureka
     spec:
       containers:
-        - name: {{ $name }}
-          image: {{ $svc.image }}
-          imagePullPolicy: IfNotPresent
+        - name: eureka
+          image: eureka
           ports:
-            - containerPort: {{ $svc.port }}
+            - containerPort: 9009
           env:
             - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
               value: http://eureka:9009/eureka
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
-              value: "false"
+              value: "true"
 ---
-{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka
+spec:
+  selector:
+    app: eureka
+  ports:
+    - port: 9009
+      targetPort: 9009

@@ -2,6 +2,8 @@ apiVersion: skaffold/v4beta6
 kind: Config
 
 build:
+  local:
+    push: false
   artifacts:
     - image: eureka
       context: ../cd_eureka
@@ -18,10 +20,10 @@ build:
     - image: notification-service
       context: ../cd_notification
 
+manifests:
+  rawYaml:
+    - k8s/db/*.yaml
+    - k8s/apps/*.yaml
+
 deploy:
-  helm:
-    releases:
-      - name: cd-platform
-        chartPath: helm/cd-platform
-        valuesFiles:
-          - helm/cd-platform/values.yaml
+  kubectl: {}
