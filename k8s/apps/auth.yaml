@@ -22,6 +22,8 @@ spec:
               value: jdbc:postgresql://db-auth:5432/cd_auth
             - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
               value: http://eureka:9009/eureka
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
 ---
 apiVersion: v1
 kind: Service

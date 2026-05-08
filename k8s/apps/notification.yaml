@@ -29,13 +29,12 @@ spec:
             # Eureka
             - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
               value: http://eureka:9009/eureka
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
 
             # Auth
             - name: SECURITY_OAUTH2_RESOURCE_USERINFOURI
               value: http://auth-service:9900/user
-
-            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
-              value: "false"
 ---
 apiVersion: v1
 kind: Service
