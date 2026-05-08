@@ -24,6 +24,36 @@ manifests:
   rawYaml:
     - k8s/db/*.yaml
     - k8s/apps/*.yaml
+    
+portForward:
+  - resourceType: service
+    resourceName: eureka
+    port: 9009        # порт внутри кластера
+    localPort: 9009   # порт, который будет доступен на вашем localhost
+  - resourceType: service
+    resourceName: site-service
+    port: 8080        # порт внутри кластера
+    localPort: 8080   # порт, который будет доступен на вашем localhost
+  - resourceType: service
+    resourceName: db-auth
+    port: 5432
+    localPort: 5433 # Порт, который вы укажете в pgAdmin (localhost:5432)
+  - resourceType: service
+    resourceName: db-generator
+    port: 5432
+    localPort: 5434 # Порт, который вы укажете в pgAdmin (localhost:5432)
+  - resourceType: service
+    resourceName: db-mock
+    port: 5432
+    localPort: 5435 # Порт, который вы укажете в pgAdmin (localhost:5432)
+  - resourceType: service
+    resourceName: db-desc
+    port: 5432
+    localPort: 5436 # Порт, который вы укажете в pgAdmin (localhost:5432)
+  - resourceType: service
+    resourceName: db-notification
+    port: 5432
+    localPort: 5437 # Порт, который вы укажете в pgAdmin (localhost:5432)
 
 deploy:
   kubectl: {}
