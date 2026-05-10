@@ -37,23 +37,23 @@ portForward:
   - resourceType: service
     resourceName: db-auth
     port: 5432
-    localPort: 5433 # Порт, который вы укажете в pgAdmin (localhost:5432)
+    localPort: 5433 # Порт, который вы укажете в pgAdmin (localhost:5433)
   - resourceType: service
     resourceName: db-generator
     port: 5432
-    localPort: 5434 # Порт, который вы укажете в pgAdmin (localhost:5432)
+    localPort: 5434 # Порт, который вы укажете в pgAdmin (localhost:5434)
   - resourceType: service
     resourceName: db-mock
     port: 5432
-    localPort: 5435 # Порт, который вы укажете в pgAdmin (localhost:5432)
+    localPort: 5435 # Порт, который вы укажете в pgAdmin (localhost:5435)
   - resourceType: service
     resourceName: db-desc
     port: 5432
-    localPort: 5436 # Порт, который вы укажете в pgAdmin (localhost:5432)
+    localPort: 5436 # Порт, который вы укажете в pgAdmin (localhost:5436)
   - resourceType: service
     resourceName: db-notification
     port: 5432
-    localPort: 5437 # Порт, который вы укажете в pgAdmin (localhost:5432)
+    localPort: 5437 # Порт, который вы укажете в pgAdmin (localhost:5437)
 
 deploy:
   kubectl: {}
