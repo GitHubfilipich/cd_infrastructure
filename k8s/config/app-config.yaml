@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+
+data:
+  EUREKA_URL: http://eureka:9009/eureka
+  AUTH_URL: http://auth-service:9900/user

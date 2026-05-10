@@ -22,23 +22,31 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://db-generator:5432/cd_generator
             - name: SPRING_DATASOURCE_USERNAME
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
             - name: SPRING_DATASOURCE_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
 
             # Eureka
             - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
-              value: http://eureka:9009/eureka
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: EUREKA_URL
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
               value: "true"
 
-            # Auth service dependency (как в docker-compose)
+            # Auth
             - name: SECURITY_OAUTH2_RESOURCE_USERINFOURI
-              value: http://auth-service:9900/user
-
-            # Network stability (как у тебя было)
-            #- name: EUREKA_INSTANCE_HOSTNAME
-            #  value: generator-service
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AUTH_URL
 ---
 apiVersion: v1
 kind: Service
